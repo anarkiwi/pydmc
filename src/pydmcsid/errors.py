@@ -1,8 +1,8 @@
-"""Exceptions for pydmc."""
+"""Exceptions for pydmcsid."""
 
 
 class DmcError(Exception):
-    """Base error for all pydmc failures."""
+    """Base error for all pydmcsid failures."""
 
 
 class SidParseError(DmcError):

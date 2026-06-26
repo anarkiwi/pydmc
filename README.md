@@ -1,10 +1,10 @@
-# pydmc
+# pydmcsid
 
 Pure-Python reader and player for **DMC (Demo Music Creator)** SID tunes — the
 C64 player by Brian/Graffity ("`-PLAYER (C) BRIAN/GRAFFITY!`").
 
 A DMC `.sid` is the player binary plus the per-tune song data resident in the same
-image. `pydmc` loads the image, locates the per-tune table bases from the player
+image. `pydmcsid` loads the image, locates the per-tune table bases from the player
 code operands (no baked addresses — a differently-sized tune relocates its tables),
 and runs a faithful integer transcription of the 6502 play routine, exposing the
 per-frame SID register writes.
@@ -12,10 +12,10 @@ per-frame SID register writes.
 ## Usage
 
 ```python
-import pydmc
+import pydmcsid
 
-song = pydmc.read("tune.sid")
-for w in pydmc.iter_register_writes(song, max_frames=50 * 60):
+song = pydmcsid.read("tune.sid")
+for w in pydmcsid.iter_register_writes(song, max_frames=50 * 60):
     print(w.clock, w.reg, w.val)   # absolute CPU cycle, $D4xx reg offset, value
 ```
 

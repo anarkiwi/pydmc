@@ -11,9 +11,9 @@ can frame and byte-compare them.
 
 from typing import Iterator, NamedTuple
 
-from pydmc import constants
-from pydmc.player import iter_frames
-from pydmc.reader import Song
+from pydmcsid import constants
+from pydmcsid.player import iter_frames
+from pydmcsid.reader import Song
 
 DEFAULT_WRITE_SPACING = 16
 

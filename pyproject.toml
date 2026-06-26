@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pydmc"
+name = "pydmcsid"
 version = "0.1.0"
 description = "Pure-Python reader and player for DMC (Demo Music Creator) SID tunes"
 readme = "README.md"
@@ -30,9 +30,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/anarkiwi/pydmc"
-Source = "https://github.com/anarkiwi/pydmc"
-Issues = "https://github.com/anarkiwi/pydmc/issues"
+Homepage = "https://github.com/anarkiwi/pydmcsid"
+Source = "https://github.com/anarkiwi/pydmcsid"
+Issues = "https://github.com/anarkiwi/pydmcsid/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -44,7 +44,7 @@ addopts = "-ra"
 
 [tool.coverage.run]
 branch = true
-source = ["pydmc"]
+source = ["pydmcsid"]
 
 [tool.coverage.report]
 fail_under = 80

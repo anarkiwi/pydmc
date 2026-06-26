@@ -62,7 +62,9 @@ def fetch(relpath: str, *, force: bool = False) -> Path:
         data = (Path(local) / relpath).read_bytes()
     else:
         url = f"{MIRROR}/{relpath}"
-        req = urllib.request.Request(url, headers={"User-Agent": "pydmc/fetch_tunes"})
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "pydmcsid/fetch_tunes"}
+        )
         with urllib.request.urlopen(req, timeout=60) as resp:  # nosec B310 (https)
             data = resp.read()
     if not _is_sid(data):

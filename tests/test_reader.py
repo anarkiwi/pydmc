@@ -2,13 +2,13 @@
 
 import pytest
 
-import pydmc
-from pydmc.errors import SidParseError
+import pydmcsid
+from pydmcsid.errors import SidParseError
 
 
 def test_read_sid(tune_path):
     """A DMC ``.sid`` parses into a resident-image Song."""
-    song = pydmc.read(tune_path)
+    song = pydmcsid.read(tune_path)
     assert song.load == 0x1000
     assert song.image_len > 0
     assert song.songs >= 1
@@ -24,10 +24,10 @@ def test_parse_rejects_non_dmc():
     header[8:10] = (0x1000).to_bytes(2, "big")  # load
     header[0x0E:0x10] = (1).to_bytes(2, "big")  # songs
     with pytest.raises(SidParseError):
-        pydmc.parse(bytes(header) + body)
+        pydmcsid.parse(bytes(header) + body)
 
 
 def test_parse_prg_too_short():
     """A truncated PRG raises."""
     with pytest.raises(SidParseError):
-        pydmc.parse(b"\x00")
+        pydmcsid.parse(b"\x00")

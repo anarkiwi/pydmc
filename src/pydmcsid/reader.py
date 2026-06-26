@@ -9,8 +9,8 @@ import struct
 from dataclasses import dataclass
 from pathlib import Path
 
-from pydmc import constants
-from pydmc.errors import SidParseError
+from pydmcsid import constants
+from pydmcsid.errors import SidParseError
 
 
 @dataclass

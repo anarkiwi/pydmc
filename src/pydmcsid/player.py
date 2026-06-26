@@ -9,13 +9,13 @@ the 16-bit PW sweep ($134E), the pitch-slide effect ($13C5), the glide ($141C), 
 6-step filter sweep ($13C5/$13D1) and the triangle vibrato ($1520).
 
 Transcribed from the DMC disassembly (``disasm.asm`` $1000..$1830); the per-tune
-table bases are read from the player-code operands (see :mod:`pydmc.constants`), so
+table bases are read from the player-code operands (see :mod:`pydmcsid.constants`), so
 a differently-sized tune (relocated tables) plays without any baked addresses.
 Every work byte mirrors the player's zero-page-relocated work RAM exactly; the
 per-voice arrays are indexed by ``X`` in 0..2 (the player's voice loop).
 
 This is the same integer player the deplayroutine ``dmctick`` engine transcribes;
-keeping it standalone lets pydmc serve as an independent validator oracle.
+keeping it standalone lets pydmcsid serve as an independent validator oracle.
 """
 
 # A faithful integer transcription: the per-frame methods carry the player's exact
@@ -25,8 +25,8 @@ keeping it standalone lets pydmc serve as an independent validator oracle.
 
 from typing import Iterator, List, Tuple
 
-from pydmc import constants
-from pydmc.reader import Song
+from pydmcsid import constants
+from pydmcsid.reader import Song
 
 SID_BASE = 0xD400
 
