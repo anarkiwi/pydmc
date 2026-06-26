@@ -1,32 +1,25 @@
 """Byte-exact playback: the DMC player reproduces the committed oracle grids.
 
-Frames the player's per-VBI-play-call write bursts (the first burst = the init
-baseline, every subsequent burst = one play call) into a forward-filled 25-register
-grid and asserts it equals the committed frozen oracle grid byte-for-byte (lead
-aligned over the leading silent call).  This is the player's correctness gate.
+Frames the player's ``iter_register_writes`` stream with the STANDARD per-frame
+forward-fill (one row per VBI play call at the PAL period, the leading init burst
+as frame-0 baseline -- identical to deplayroutine's ``oracle.grid_from_writes``)
+and asserts it equals the committed frozen oracle grid byte-for-byte (lead aligned
+over the leading silent call).  This is the player's correctness gate.
 """
 
 import pydmc
-from helpers import NREG, PW_HI_REGS, load_grid
+from helpers import NREG, grid_from_writes, load_grid
 
 SID_BASE = 0xD400
 
 
 def _grid_from_calls(song, nframes):
-    """Forward-fill the player's per-call write bursts into a per-frame grid.
-
-    The first burst (init) forms the frame-0 baseline; each later burst is a row.
-    """
-    cur = [0] * NREG
-    rows = []
-    for frame, writes in enumerate(pydmc.iter_frames(song, max_frames=nframes)):
-        for reg, val in writes:
-            if 0 <= reg < NREG:
-                cur[reg] = (val & 0x0F) if reg in PW_HI_REGS else val
-        if frame == 0:  # init burst = baseline, not a row
-            continue
-        rows.append(cur[:])
-    return rows
+    """Frame the player's register-write stream into the STANDARD per-frame grid."""
+    writes = [
+        (w.clock, w.reg, w.val)
+        for w in pydmc.iter_register_writes(song, max_frames=nframes)
+    ]
+    return grid_from_writes(writes)
 
 
 def _lead_aligned_equal(oracle, rendered):
@@ -51,7 +44,7 @@ def test_is_dmc(tune_path):
 
 
 def test_byte_exact_vs_oracle(tune_id, tune_path):
-    """The player reproduces the committed per-call oracle grid byte-exact."""
+    """The player reproduces the committed (standard-framed) oracle grid byte-exact."""
     oracle = load_grid(tune_id)
     song = pydmc.read(tune_path)
     rendered = _grid_from_calls(song, len(oracle) + 8)
