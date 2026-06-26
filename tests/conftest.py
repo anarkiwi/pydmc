@@ -1,22 +1,24 @@
 """Shared test fixtures: tune access + the committed byte-exact oracle grids.
 
 DMC ``.sid`` tunes are HVSC copyright works, never committed.  ``tune_path``
-locates a tune from a local HVSC mirror (``$HVSC`` or the default path), skipping
-the test when the tune is absent.  The ground-truth per-frame register grids are
-committed frozen (``fixtures/*.grid.txt``), framed per VBI play call (the DMC
-framing), so the byte-exact player tests run with no emulator binary.
+FETCHES + CACHES the tune on demand (HVSC mirror, honouring a local ``$HVSC``
+tree) into the gitignored cache and the byte-exact tests RUN for real -- they do
+not skip (a fetch failure is a test failure).  The ground-truth per-frame
+register grids are committed frozen (``fixtures/*.grid.txt``), framed per VBI
+play call (the DMC framing), so no emulator binary is needed.
 """
 
-import os
+import sys
 from pathlib import Path
 
 import pytest
 
 from helpers import TUNES, load_grid
 
+REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "scripts"))
 
-def _hvsc_root() -> Path:
-    return Path(os.environ.get("HVSC", "/scratch/preframr/hvsc/C64Music"))
+import fetch_tunes  # noqa: E402  (after sys.path tweak)
 
 
 @pytest.fixture(params=sorted(TUNES))
@@ -27,12 +29,14 @@ def tune_id(request):
 
 @pytest.fixture
 def tune_path(tune_id):
-    """Path to a DMC test tune, or skip if the HVSC mirror is unavailable."""
+    """Path to a DMC test tune, FETCHED + CACHED on demand (never skipped).
+
+    The byte-exact validation requires the tune, so it is fetched from the HVSC
+    mirror into the gitignored cache (honouring a local ``$HVSC`` tree) and the
+    test runs for real -- a fetch failure is a test failure, not a skip.
+    """
     rel, _grid = TUNES[tune_id]
-    path = _hvsc_root() / rel
-    if not path.exists():
-        pytest.skip("tune %r not found in HVSC mirror (set $HVSC)" % tune_id)
-    return str(path)
+    return str(fetch_tunes.fetch(rel))
 
 
 @pytest.fixture
